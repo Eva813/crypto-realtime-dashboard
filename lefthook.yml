@@ -1,0 +1,19 @@
+# Lefthook - Git Hooks 配置
+# 符合專案憲法要求：linting + type checking + testing
+# https://github.com/evilmartians/lefthook
+
+# Pre-commit hook：提交前執行程式碼品質檢查
+pre-commit:
+  parallel: true # 並行執行所有命令，提升速度
+
+  commands:
+    # TypeScript 型別檢查（憲法要求：strict mode MUST be enforced）
+    type-check:
+      glob: "*.{ts,tsx}"
+      run: pnpm exec tsc --noEmit
+      stage_fixed: false # 型別檢查不修改檔案
+
+    # Lint-staged：對 staged 檔案執行 linting、格式化和測試
+    lint-staged:
+      run: pnpm exec lint-staged
+      stage_fixed: true # 自動 stage 被 prettier 格式化的檔案

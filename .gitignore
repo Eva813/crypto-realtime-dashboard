@@ -12,6 +12,21 @@ dist
 dist-ssr
 *.local
 
+# Test coverage
+coverage
+.nyc_output
+
+# Vitest
+test-results
+
+# Playwright
+playwright-report
+playwright/.cache
+
+# Lefthook
+.lefthook/
+.lefthook-local.yml
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

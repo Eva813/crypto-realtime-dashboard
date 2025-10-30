@@ -19,9 +19,9 @@ If you are developing a production application, we recommend updating the config
 
 ```js
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(["dist"]),
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ["**/*.{ts,tsx}"],
     extends: [
       // Other configs...
 
@@ -36,42 +36,42 @@ export default defineConfig([
     ],
     languageOptions: {
       parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
         tsconfigRootDir: import.meta.dirname,
       },
       // other options...
     },
   },
-])
+]);
 ```
 
 You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
 ```js
 // eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+import reactX from "eslint-plugin-react-x";
+import reactDom from "eslint-plugin-react-dom";
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(["dist"]),
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ["**/*.{ts,tsx}"],
     extends: [
       // Other configs...
       // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
+      reactX.configs["recommended-typescript"],
       // Enable lint rules for React DOM
       reactDom.configs.recommended,
     ],
     languageOptions: {
       parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
         tsconfigRootDir: import.meta.dirname,
       },
       // other options...
     },
   },
-])
+]);
 ```
 
 ## Constitutional Compliance
@@ -88,6 +88,11 @@ Before committing code, ensure:
 - ✓ Core Web Vitals targets met (FCP <1.5s, LCP <2.5s, TTI <3.5s)
 - ✓ Bundle size under 250KB gzipped
 - ✓ Real-time data integrity indicators implemented
+
+### Documentation
+
+- [Testing Guide](docs/testing.md) - Comprehensive testing strategies and best practices
+- [Git Hooks Guide](docs/git-hooks.md) - Pre-commit checks and workflow automation
 
 ### Development Commands
 
@@ -114,7 +119,7 @@ pnpm preview
 ### Architecture Principles
 
 - **Test-First Development**: Write tests before implementation (TDD)
-- **Mobile-First Design**: Responsive design starting from mobile breakpoints  
+- **Mobile-First Design**: Responsive design starting from mobile breakpoints
 - **Performance-First**: 60 FPS interactions, optimized bundle splitting
 - **Accessibility-First**: WCAG 2.1 AA compliance for all components
 - **Real-Time Integrity**: Clear connection status and data freshness indicators
