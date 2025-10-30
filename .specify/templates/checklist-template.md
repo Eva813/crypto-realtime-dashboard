@@ -20,17 +20,35 @@
   ============================================================================
 -->
 
-## [Category 1]
+## Constitutional Compliance
 
-- [ ] CHK001 First checklist item with clear action
-- [ ] CHK002 Second checklist item
-- [ ] CHK003 Third checklist item
+- [ ] CHK001 TypeScript strict mode enabled with zero ESLint warnings
+- [ ] CHK002 Test coverage meets minimum 80% requirement (100% for critical paths)
+- [ ] CHK003 WCAG 2.1 AA accessibility standards compliance verified
+- [ ] CHK004 Core Web Vitals targets achieved (FCP <1.5s, LCP <2.5s, TTI <3.5s)
+- [ ] CHK005 Bundle size under 250KB gzipped limit
+- [ ] CHK006 Real-time data integrity indicators implemented
 
-## [Category 2]
+## Code Quality Standards
 
-- [ ] CHK004 Another category item
-- [ ] CHK005 Item with specific criteria
-- [ ] CHK006 Final item in this category
+- [ ] CHK007 Single Responsibility Principle applied to all components
+- [ ] CHK008 File sizes under 250 lines (refactored if exceeded)
+- [ ] CHK009 No `any` types without explicit justification
+- [ ] CHK010 Named exports used for better tree-shaking
+
+## User Experience Standards
+
+- [ ] CHK011 Mobile-first responsive design implemented
+- [ ] CHK012 Loading states shown for actions >300ms
+- [ ] CHK013 Error boundaries handle component failures gracefully
+- [ ] CHK014 Design system components used (no one-off styles)
+
+## Performance Requirements
+
+- [ ] CHK015 60 FPS maintained for all interactions and animations
+- [ ] CHK016 WebSocket updates throttled to prevent excessive re-renders
+- [ ] CHK017 Memory leaks checked and resolved
+- [ ] CHK018 Code splitting implemented for route-based chunks
 
 ## Notes
 

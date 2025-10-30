@@ -113,3 +113,11 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
+### Constitutional Compliance Requirements *(mandatory)*
+
+- **CC-001**: Feature MUST achieve minimum 80% test coverage with critical paths at 100%
+- **CC-002**: All components MUST pass WCAG 2.1 AA accessibility standards
+- **CC-003**: Performance MUST meet Core Web Vitals targets (FCP <1.5s, LCP <2.5s, TTI <3.5s)
+- **CC-004**: Real-time features MUST display connection status and data freshness indicators
+- **CC-005**: TypeScript strict mode compliance with zero ESLint warnings

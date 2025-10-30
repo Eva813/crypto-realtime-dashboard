@@ -1,6 +1,6 @@
-# React + TypeScript + Vite
+# Crypto Realtime
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A high-performance, real-time cryptocurrency price tracking application built with React, TypeScript, and Vite. This application follows strict constitutional principles for code quality, testing standards, user experience consistency, and performance requirements.
 
 Currently, two official plugins are available:
 
@@ -73,3 +73,50 @@ export default defineConfig([
   },
 ])
 ```
+
+## Constitutional Compliance
+
+This project follows strict development principles outlined in `.specify/memory/constitution.md`:
+
+### Quick Compliance Checklist
+
+Before committing code, ensure:
+
+- ✓ TypeScript strict mode with zero ESLint warnings
+- ✓ Minimum 80% test coverage (100% for critical paths)
+- ✓ WCAG 2.1 AA accessibility compliance
+- ✓ Core Web Vitals targets met (FCP <1.5s, LCP <2.5s, TTI <3.5s)
+- ✓ Bundle size under 250KB gzipped
+- ✓ Real-time data integrity indicators implemented
+
+### Development Commands
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server with performance monitoring
+pnpm dev
+
+# Run linting with zero warnings enforcement
+pnpm lint
+
+# Build with performance budgets
+pnpm build
+
+# Run tests with coverage reporting
+pnpm test --coverage
+
+# Preview production build
+pnpm preview
+```
+
+### Architecture Principles
+
+- **Test-First Development**: Write tests before implementation (TDD)
+- **Mobile-First Design**: Responsive design starting from mobile breakpoints  
+- **Performance-First**: 60 FPS interactions, optimized bundle splitting
+- **Accessibility-First**: WCAG 2.1 AA compliance for all components
+- **Real-Time Integrity**: Clear connection status and data freshness indicators
+
+For detailed development guidelines, see `.specify/memory/constitution.md`.

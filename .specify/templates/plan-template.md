@@ -31,7 +31,34 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+**Code Quality Excellence**:
+- [ ] TypeScript strict mode enabled
+- [ ] ESLint configuration validates zero warnings policy
+- [ ] File size limits (<250 lines) planned for complex features
+- [ ] Single Responsibility Principle applied to component design
+
+**Test-First Development**:
+- [ ] Test strategy achieves minimum 80% coverage
+- [ ] Critical paths identified for 100% coverage requirement
+- [ ] TDD workflow planned (tests before implementation)
+- [ ] Integration tests planned for WebSocket/API connections
+
+**User Experience Consistency**:
+- [ ] WCAG 2.1 AA compliance verified
+- [ ] Mobile-first responsive design planned
+- [ ] Design system components identified
+- [ ] Loading states and error boundaries planned
+
+**Performance Standards**:
+- [ ] Core Web Vitals targets defined (<1.5s FCP, <2.5s LCP, <3.5s TTI)
+- [ ] Bundle size budget planned (<250KB gzipped)
+- [ ] Code splitting strategy defined
+- [ ] WebSocket throttling strategy planned
+
+**Real-Time Data Integrity**:
+- [ ] Connection status indicators planned
+- [ ] Data staleness handling strategy defined
+- [ ] Graceful degradation to polling planned
 
 ## Project Structure
 
