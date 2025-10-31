@@ -220,13 +220,20 @@ export class BinanceWebSocketService {
 
   /**
    * Send K-line subscription message
+   *
+   * 學習重點：
+   * 1. Binance WebSocket API 的 K線訂閱格式為 <symbol>@kline_<interval>（注意是單數 "kline"）
+   * 2. 常見錯誤：使用 "klines" 會導致訂閱失敗，無法收到任何數據
+   * 3. interval 參數必須符合 Binance 支持的時間間隔（1h, 4h, 1d, 1w 等）
    */
   private sendKLineSubscription(
     symbol: string,
     interval: "1h" | "4h" | "1d" | "1w",
   ): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
-      const streamName = `${symbol.toLowerCase()}@klines_${interval}`;
+      // 注意：使用 @kline_ 而不是 @klines_（單數形式）
+      // 範例：BTCUSDT@kline_1h
+      const streamName = `${symbol.toLowerCase()}@kline_${interval}`;
       if (!this.subscriptionTopics.has(streamName)) {
         this.ws.send(
           JSON.stringify({
@@ -264,13 +271,17 @@ export class BinanceWebSocketService {
 
   /**
    * Unsubscribe from K-line updates
+   *
+   * 學習重點：
+   * 取消訂閱時必須使用與訂閱時完全相同的 stream name
    */
   private unsubscribeKLine(
     symbol: string,
     interval: "1h" | "4h" | "1d" | "1w",
   ): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
-      const streamName = `${symbol.toLowerCase()}@klines_${interval}`;
+      // 保持與訂閱時相同的格式：@kline_（單數）
+      const streamName = `${symbol.toLowerCase()}@kline_${interval}`;
       if (this.subscriptionTopics.has(streamName)) {
         this.ws.send(
           JSON.stringify({

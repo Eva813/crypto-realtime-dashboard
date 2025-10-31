@@ -114,6 +114,106 @@
   overflow: hidden;
 }
 
+/**
+ * Loading Overlay 樣式
+ *
+ * 學習重點：
+ * 1. position: absolute 覆蓋整個圖表容器
+ * 2. 半透明背景提供更好的視覺層次
+ * 3. z-index 確保 loading 在最上層
+ */
+.chart-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(154, 192, 52, 0.98); /* 幾乎不透明的白色背景 */
+  z-index: 100; /* 提高 z-index 確保在最上層 */
+  /* 平滑淡入效果 */
+  animation: fadeIn 0.2s ease-in;
+}
+
+/* 確保 spinner 在 overlay 內可見 */
+.chart-loading-overlay .loading-spinner-container {
+  position: relative;
+  z-index: 101;
+}
+
+/* 在 KLineChart 內重新定義 spinner 樣式，確保顯示 */
+.chart-loading-overlay .loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(51, 102, 204, 0.2);
+  border-top-color: #3366cc;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Spinner 旋轉動畫 */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/**
+ * Error 狀態樣式
+ *
+ * 學習重點：
+ * 1. 使用 flexbox 實現垂直居中
+ * 2. 層次化資訊顯示（圖標 + 主訊息 + 詳細說明）
+ */
+.chart-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 10;
+}
+
+.chart-error .error-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.chart-error p {
+  margin: 0;
+  color: #ea3943;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.chart-error .error-detail {
+  color: #666;
+  font-size: 14px;
+  font-weight: 400;
+}
+
 @media (max-width: 768px) {
   .kline-header {
     flex-direction: column;

@@ -1,0 +1,138 @@
+/**
+ * LoadingSpinner 樣式
+ *
+ * 學習重點：
+ * 1. CSS @keyframes 定義動畫
+ * 2. transform 和 animation 屬性創造旋轉效果
+ * 3. border 技巧創造圓環 spinner
+ * 4. Flexbox 置中技巧
+ */
+
+/* ==================== 容器樣式 ==================== */
+
+.loading-spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* ==================== Spinner 動畫 ==================== */
+
+/**
+ * 旋轉動畫定義
+ *
+ * 學習重點：
+ * - @keyframes 定義動畫的關鍵幀
+ * - transform: rotate() 實現旋轉
+ * - 從 0deg 旋轉到 360deg 完成一圈
+ */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/**
+ * Spinner 圓圈樣式
+ *
+ * 學習重點：
+ * - border: 創造圓環的底色（灰色）
+ * - border-top: 創造旋轉的彩色部分（藍色）
+ * - border-radius: 50% 創造完美圓形
+ * - animation: 應用旋轉動畫
+ */
+.loading-spinner {
+  /* 使用 border 創造圓環效果 */
+  border: 4px solid rgba(51, 102, 204, 0.1); /* 淺藍色底色 */
+  border-top: 4px solid #3366cc; /* 深藍色旋轉部分 */
+  border-radius: 50%; /* 創造圓形 */
+
+  /* 應用旋轉動畫 */
+  animation: spin 0.8s linear infinite;
+  /*
+   * 參數說明：
+   * - spin: 動畫名稱
+   * - 0.8s: 動畫持續時間（一圈 0.8 秒）
+   * - linear: 線性速度（勻速旋轉）
+   * - infinite: 無限循環
+   */
+}
+
+/* ==================== 尺寸變體 ==================== */
+
+.loading-spinner.small {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+.loading-spinner.medium {
+  width: 40px;
+  height: 40px;
+  border-width: 4px;
+}
+
+.loading-spinner.large {
+  width: 60px;
+  height: 60px;
+  border-width: 5px;
+}
+
+/* ==================== 無障礙設計 ==================== */
+
+/**
+ * Screen Reader Only 類別
+ *
+ * 學習重點：
+ * - 視覺上完全隱藏元素
+ * - 但屏幕閱讀器仍可讀取內容
+ * - 用於改善無障礙體驗
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ==================== 響應式設計 ==================== */
+
+@media (max-width: 768px) {
+  .loading-spinner.large {
+    width: 48px;
+    height: 48px;
+    border-width: 4px;
+  }
+}
+
+/* ==================== 動畫性能優化 ==================== */
+
+/**
+ * 學習重點：
+ * - will-change 提示瀏覽器即將變化的屬性
+ * - 瀏覽器可以提前優化渲染
+ * - 但不要過度使用，會消耗記憶體
+ */
+.loading-spinner {
+  will-change: transform;
+}
+
+/**
+ * 減少動畫偏好設置
+ * 學習重點：尊重使用者的系統設置
+ */
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner {
+    animation: spin 1.5s linear infinite;
+  }
+}
