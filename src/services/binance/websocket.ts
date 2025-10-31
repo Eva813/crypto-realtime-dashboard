@@ -1,0 +1,360 @@
+import {
+  validatePriceUpdate,
+  validateKLine,
+  type PriceUpdate,
+  type KLine,
+} from "../../utils/validation";
+
+/**
+ * Mapper service (T014) - Converts Binance API messages to domain types
+ * Handles data transformation and validation
+ */
+export class MapperService {
+  /**
+   * Convert Binance 24hrMiniTicker to PriceUpdate
+   */
+  static toBinancePriceUpdate(
+    message: Record<string, unknown>,
+  ): PriceUpdate | null {
+    try {
+      const update = {
+        symbol: message.s as string,
+        price: parseFloat(message.c as string),
+        timestamp: message.E as number,
+        changePercent24h: parseFloat(message.P as string),
+      };
+
+      // Validate against schema
+      return validatePriceUpdate(update);
+    } catch (error) {
+      console.error("Price update validation failed:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Convert Binance kline data to KLine
+   */
+  static toBinanceKLine(message: Record<string, unknown>): KLine | null {
+    try {
+      const k = message.k as Record<string, unknown>;
+      const kline = {
+        time: Math.floor((k.t as number) / 1000), // Convert to seconds
+        open: parseFloat(k.o as string),
+        high: parseFloat(k.h as string),
+        low: parseFloat(k.l as string),
+        close: parseFloat(k.c as string),
+        volume: parseFloat(k.v as string),
+      };
+
+      // Validate against schema
+      return validateKLine(kline);
+    } catch (error) {
+      console.error("K-line validation failed:", error);
+      return null;
+    }
+  }
+}
+
+/**
+ * Enhanced BinanceWebSocketService (T013)
+ * Manages WebSocket connection with proper error handling and validation
+ */
+export class BinanceWebSocketService {
+  private ws: WebSocket | null = null;
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 3;
+  private reconnectDelays = [1000, 2000, 4000];
+  private subscribers: Map<string, (update: PriceUpdate) => void> = new Map();
+  private klineSubscribers: Map<string, (kline: KLine) => void> = new Map();
+  private connectionStatusCallbacks: Array<(isConnected: boolean) => void> = [];
+  private subscriptionCount = 0;
+  private maxSubscriptions = 100;
+  private lastUpdateTime = Date.now();
+  private subscriptionTopics: Set<string> = new Set();
+  private isConnected = false;
+
+  /**
+   * Connect to Binance WebSocket
+   */
+  connect(): void {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      return;
+    }
+
+    try {
+      this.ws = new WebSocket("wss://stream.binance.com:9443/ws");
+
+      this.ws.onopen = () => {
+        this.reconnectAttempts = 0;
+        this.isConnected = true;
+        this.notifyConnectionStatus(true);
+      };
+
+      this.ws.onmessage = (event: MessageEvent) => {
+        this.handleMessage(event.data);
+      };
+
+      this.ws.onerror = () => {
+        console.error("WebSocket error");
+        this.notifyConnectionStatus(false);
+      };
+
+      this.ws.onclose = () => {
+        this.isConnected = false;
+        this.notifyConnectionStatus(false);
+        this.attemptReconnect();
+      };
+    } catch (error) {
+      console.error("Failed to create WebSocket:", error);
+      this.attemptReconnect();
+    }
+  }
+
+  /**
+   * Handle incoming WebSocket message
+   */
+  private handleMessage(data: string): void {
+    try {
+      const message = JSON.parse(data) as Record<string, unknown>;
+
+      // Handle price tick data (24hrMiniTicker)
+      if (message.e === "24hrMiniTicker") {
+        const priceUpdate = MapperService.toBinancePriceUpdate(message);
+        if (priceUpdate) {
+          const callback = this.subscribers.get(message.s as string);
+          if (callback) {
+            callback(priceUpdate);
+          }
+          this.lastUpdateTime = Date.now();
+        }
+      }
+
+      // Handle K-line data
+      if (message.e === "kline") {
+        const kline = MapperService.toBinanceKLine(message);
+        if (kline) {
+          const k = message.k as Record<string, unknown>;
+          const key = `${message.s as string}_${k.i as string}`;
+          const callback = this.klineSubscribers.get(key);
+          if (callback) {
+            callback(kline);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error processing WebSocket message:", error);
+    }
+  }
+
+  /**
+   * Subscribe to price updates for a cryptocurrency
+   */
+  subscribe(
+    symbol: string,
+    callback: (update: PriceUpdate) => void,
+  ): () => void {
+    if (
+      this.subscriptionCount >= this.maxSubscriptions &&
+      !this.subscribers.has(symbol)
+    ) {
+      console.warn(`Subscription limit (${this.maxSubscriptions}) reached`);
+      return () => {};
+    }
+
+    if (!this.subscribers.has(symbol)) {
+      this.subscriptionCount++;
+      this.sendSubscription(symbol);
+    }
+
+    this.subscribers.set(symbol, callback);
+
+    // Return unsubscribe function
+    return () => {
+      this.subscribers.delete(symbol);
+      this.subscriptionCount--;
+      this.unsubscribe(symbol);
+    };
+  }
+
+  /**
+   * Subscribe to K-line updates
+   */
+  subscribeKLine(
+    symbol: string,
+    interval: "1h" | "4h" | "1d" | "1w",
+    callback: (kline: KLine) => void,
+  ): () => void {
+    const key = `${symbol}_${interval}`;
+
+    if (!this.klineSubscribers.has(key)) {
+      this.sendKLineSubscription(symbol, interval);
+    }
+
+    this.klineSubscribers.set(key, callback);
+
+    return () => {
+      this.klineSubscribers.delete(key);
+      this.unsubscribeKLine(symbol, interval);
+    };
+  }
+
+  /**
+   * Send subscription message to WebSocket
+   */
+  private sendSubscription(symbol: string): void {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      const streamName = `${symbol.toLowerCase()}@24hrMiniTicker`;
+      if (!this.subscriptionTopics.has(streamName)) {
+        this.ws.send(
+          JSON.stringify({
+            method: "SUBSCRIBE",
+            params: [streamName],
+            id: Date.now(),
+          }),
+        );
+        this.subscriptionTopics.add(streamName);
+      }
+    }
+  }
+
+  /**
+   * Send K-line subscription message
+   */
+  private sendKLineSubscription(
+    symbol: string,
+    interval: "1h" | "4h" | "1d" | "1w",
+  ): void {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      const streamName = `${symbol.toLowerCase()}@klines_${interval}`;
+      if (!this.subscriptionTopics.has(streamName)) {
+        this.ws.send(
+          JSON.stringify({
+            method: "SUBSCRIBE",
+            params: [streamName],
+            id: Date.now(),
+          }),
+        );
+        this.subscriptionTopics.add(streamName);
+      }
+    }
+  }
+
+  /**
+   * Unsubscribe from price updates
+   */
+  private unsubscribe(symbol: string): void {
+    if (
+      this.ws?.readyState === WebSocket.OPEN &&
+      this.subscriptionCount === 0
+    ) {
+      const streamName = `${symbol.toLowerCase()}@24hrMiniTicker`;
+      if (this.subscriptionTopics.has(streamName)) {
+        this.ws.send(
+          JSON.stringify({
+            method: "UNSUBSCRIBE",
+            params: [streamName],
+            id: Date.now(),
+          }),
+        );
+        this.subscriptionTopics.delete(streamName);
+      }
+    }
+  }
+
+  /**
+   * Unsubscribe from K-line updates
+   */
+  private unsubscribeKLine(
+    symbol: string,
+    interval: "1h" | "4h" | "1d" | "1w",
+  ): void {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      const streamName = `${symbol.toLowerCase()}@klines_${interval}`;
+      if (this.subscriptionTopics.has(streamName)) {
+        this.ws.send(
+          JSON.stringify({
+            method: "UNSUBSCRIBE",
+            params: [streamName],
+            id: Date.now(),
+          }),
+        );
+        this.subscriptionTopics.delete(streamName);
+      }
+    }
+  }
+
+  /**
+   * Attempt reconnection with exponential backoff
+   */
+  private attemptReconnect(): void {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      const delay = this.reconnectDelays[this.reconnectAttempts];
+      this.reconnectAttempts++;
+
+      setTimeout(() => {
+        this.connect();
+      }, delay);
+    }
+  }
+
+  /**
+   * Notify connection status change
+   */
+  private notifyConnectionStatus(connected: boolean): void {
+    this.connectionStatusCallbacks.forEach((callback) => callback(connected));
+  }
+
+  /**
+   * Listen to connection status changes
+   */
+  onConnectionStatusChange(
+    callback: (isConnected: boolean) => void,
+  ): () => void {
+    this.connectionStatusCallbacks.push(callback);
+    return () => {
+      this.connectionStatusCallbacks = this.connectionStatusCallbacks.filter(
+        (cb) => cb !== callback,
+      );
+    };
+  }
+
+  /**
+   * Disconnect WebSocket
+   */
+  disconnect(): void {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+    this.isConnected = false;
+    this.subscribers.clear();
+    this.klineSubscribers.clear();
+    this.subscriptionTopics.clear();
+    this.subscriptionCount = 0;
+  }
+
+  /**
+   * Check if connected
+   */
+  getIsConnected(): boolean {
+    return this.isConnected;
+  }
+
+  /**
+   * Get last update time
+   */
+  getLastUpdateTime(): number {
+    return this.lastUpdateTime;
+  }
+
+  /**
+   * Get subscription count
+   */
+  getSubscriptionCount(): number {
+    return this.subscriptionCount;
+  }
+}
+
+// Singleton instance
+export const binanceWebSocketService = new BinanceWebSocketService();

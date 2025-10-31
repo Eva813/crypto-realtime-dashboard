@@ -1,0 +1,175 @@
+.crypto-price-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.crypto-price-card:hover {
+  border-color: #3366cc;
+  box-shadow: 0 4px 12px rgba(51, 102, 204, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Header section */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.crypto-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.crypto-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.crypto-symbol {
+  font-size: 12px;
+  color: #999;
+  font-weight: 500;
+}
+
+/* Favorite button */
+.favorite-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #ddd;
+  transition: color 0.2s;
+  padding: 4px 8px;
+}
+
+.favorite-btn:hover {
+  color: #ffc107;
+}
+
+.favorite-btn.active {
+  color: #ffc107;
+}
+
+/* Price section */
+.price-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.current-price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+}
+
+.price-change {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.price-change.positive {
+  color: #16c784;
+}
+
+.price-change.negative {
+  color: #ea3943;
+}
+
+.change-arrow {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.change-value {
+  display: inline-block;
+}
+
+.change-amount {
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* Footer info */
+.card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-row .label {
+  color: #999;
+  font-weight: 500;
+}
+
+.info-row .value {
+  color: #333;
+  font-weight: 600;
+}
+
+/* Hover overlay */
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(51, 102, 204, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  border-radius: 8px;
+  font-weight: 600;
+  color: white;
+}
+
+.crypto-price-card:hover .card-overlay {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .crypto-price-card {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .current-price {
+    font-size: 20px;
+  }
+
+  .price-change {
+    font-size: 12px;
+  }
+
+  .card-footer {
+    gap: 4px;
+    padding-top: 8px;
+  }
+}

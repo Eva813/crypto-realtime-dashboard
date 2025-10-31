@@ -1,0 +1,120 @@
+.price-change-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  position: relative;
+}
+
+/* Direction and size variants */
+.price-change-indicator.up {
+  color: #16c784;
+}
+
+.price-change-indicator.down {
+  color: #ea3943;
+}
+
+.price-change-indicator.small {
+  font-size: 12px;
+}
+
+.price-change-indicator.medium {
+  font-size: 14px;
+}
+
+.price-change-indicator.large {
+  font-size: 18px;
+}
+
+/* Direction icon */
+.direction-icon {
+  display: inline-block;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+/* Percentage value */
+.percent-value {
+  display: inline-block;
+}
+
+/* Amount value */
+.amount-value {
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin-left: 2px;
+}
+
+/* Pulse animation for real-time updates */
+.pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  opacity: 0;
+  animation: pulse-ring 0.6s ease-out;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: inset 0 0 0 0 currentColor;
+    opacity: 1;
+  }
+  100% {
+    box-shadow: inset 0 0 0 4px transparent;
+    opacity: 0;
+  }
+}
+
+/* Animation class */
+.price-change-indicator.animate {
+  animation: highlight-change 0.3s ease-out;
+}
+
+@keyframes highlight-change {
+  0% {
+    background: rgba(255, 255, 0, 0.3);
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
+  100% {
+    background: transparent;
+    padding: 0;
+  }
+}
+
+/* Badge variant */
+.price-change-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.price-change-badge.positive {
+  background: rgba(22, 199, 132, 0.1);
+  color: #16c784;
+}
+
+.price-change-badge.negative {
+  background: rgba(234, 57, 67, 0.1);
+  color: #ea3943;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .price-change-indicator.small {
+    font-size: 11px;
+  }
+
+  .price-change-indicator.medium {
+    font-size: 13px;
+  }
+
+  .price-change-indicator.large {
+    font-size: 16px;
+  }
+}

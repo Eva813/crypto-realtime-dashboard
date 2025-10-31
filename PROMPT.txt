@@ -1,1 +1,1 @@
-/speckit.implement
+Review the task list in `/Users/black-star-point-frontend/crypto-realtime/specs/001-crypto-realtime/tasks.md`, check for uncompleted tasks, and then continue the implementation. The command to start is `/speckit.implement`
