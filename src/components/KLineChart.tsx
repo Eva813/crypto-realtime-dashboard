@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { createChart, ColorType, CandlestickSeries } from 'lightweight-charts';
+import { createChart, ColorType, CandlestickSeries, type IChartApi, type ISeriesApi } from 'lightweight-charts';
 import { useKLineChart } from '../hooks/useCrypto';
 import { useChartStore } from '../stores';
 import type { Cryptocurrency, TimeFrame } from '../types/index';
@@ -12,13 +12,15 @@ interface KLineChartProps {
 
 export function KLineChart({ crypto, onClose }: KLineChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { selectedTimeFrame, setTimeFrame } = useChartStore();
+  const chartRef = useRef<IChartApi | null>(null);
+  const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
 
-  // Fetch real data using the hook
+  const { selectedTimeFrame, setTimeFrame } = useChartStore();
   const { klines, isLoading, error } = useKLineChart(crypto?.symbol || '');
 
+  // Effect for chart creation
   useEffect(() => {
-    if (!containerRef.current || !crypto || klines.length === 0) return;
+    if (!containerRef.current || !crypto) return;
 
     const chart = createChart(containerRef.current, {
       layout: {
@@ -38,10 +40,8 @@ export function KLineChart({ crypto, onClose }: KLineChartProps) {
       borderDownColor: '#ea3943',
     });
 
-    // Use fetched k-line data
-    candleSeries.setData(klines as any);
-
-    chart.timeScale().fitContent();
+    chartRef.current = chart;
+    seriesRef.current = candleSeries;
 
     const handleResize = () => {
       if (containerRef.current) {
@@ -57,8 +57,18 @@ export function KLineChart({ crypto, onClose }: KLineChartProps) {
     return () => {
       window.removeEventListener('resize', handleResize);
       chart.remove();
+      chartRef.current = null;
+      seriesRef.current = null;
     };
-  }, [crypto, klines]); // Re-render chart if crypto or klines change
+  }, [crypto]); // Only re-create the chart if the crypto symbol changes
+
+  // Effect for updating data
+  useEffect(() => {
+    if (!seriesRef.current || !chartRef.current || klines.length === 0) return;
+
+    seriesRef.current.setData(klines as any);
+    chartRef.current.timeScale().fitContent();
+  }, [klines]); // Update data whenever klines change
 
   if (!crypto) {
     return null;
