@@ -1,0 +1,261 @@
+.crypto-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+/* Header */
+.detail-header {
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: #3366cc;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background: #f0f0f0;
+  color: #1a4d99;
+}
+
+.detail-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-title h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+}
+
+.detail-title .symbol {
+  color: #999;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Main Content */
+.detail-price-section {
+  background: white;
+  margin: 24px;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.price-display {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 24px;
+}
+
+.current-price {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.current-price .label {
+  font-size: 12px;
+  color: #999;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.current-price .price {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+}
+
+.price-change {
+  display: flex;
+  align-items: center;
+}
+
+.price-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat .label {
+  font-size: 12px;
+  color: #999;
+  font-weight: 500;
+}
+
+.stat .value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Chart Section */
+.detail-chart-section {
+  background: white;
+  margin: 0 24px 24px 24px;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chart-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.chart-controls h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.timeframe-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.timeframe-btn {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.timeframe-btn:hover {
+  border-color: #999;
+  background: #fff;
+}
+
+.timeframe-btn.active {
+  background: #3366cc;
+  border-color: #3366cc;
+  color: white;
+}
+
+.chart-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: #999;
+  font-size: 14px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+}
+
+/* Loading State */
+.crypto-detail.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: #999;
+  font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .detail-title {
+    width: 100%;
+  }
+
+  .detail-actions {
+    width: 100%;
+  }
+
+  .price-display {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .price-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .detail-price-section,
+  .detail-chart-section {
+    margin: 16px;
+    padding: 16px;
+  }
+
+  .timeframe-buttons {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .detail-header {
+    padding: 12px;
+  }
+
+  .current-price .price {
+    font-size: 24px;
+  }
+
+  .price-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-price-section,
+  .detail-chart-section {
+    margin: 12px;
+    padding: 12px;
+  }
+
+  .chart-placeholder {
+    height: 300px;
+  }
+}

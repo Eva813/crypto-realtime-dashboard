@@ -72,6 +72,7 @@ export function useCryptoPrice(symbol: string) {
  */
 export function useCryptoPrices(symbols: string[]) {
   // Create throttled update function inline to satisfy dependencies
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const throttledUpdate = useCallback(
     throttle((symbol: string, update: PriceUpdate) => {
       queryClient.setQueryData(queryKeys.prices.single(symbol), (old: any) => ({
