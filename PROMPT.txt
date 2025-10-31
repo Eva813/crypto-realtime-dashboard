@@ -1,1 +1,5 @@
-Review the task list in `/Users/black-star-point-frontend/crypto-realtime/specs/001-crypto-realtime/tasks.md`, check for uncompleted tasks, and then continue the implementation. The command to start is `/speckit.implement`
+Please proceed with the next immediate priority tasks you identified:
+1. T016 - TanStack Query configuration
+2. T022-T026 - Custom React hooks (useWebSocket, useCryptoPrice, etc.)
+3. T034 - Dashboard page component
+4. Integrate components and hooks together

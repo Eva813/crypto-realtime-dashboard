@@ -1,26 +1,33 @@
-import {
-  useCryptocurrencies,
-  usePrices,
-  useWatchlist,
-} from "../hooks/useCrypto";
-import type { Cryptocurrency } from "../types/index";
-import "./WatchlistView.css";
+import type { Cryptocurrency } from '../utils/validation'
+import './WatchlistView.css'
 
 interface WatchlistViewProps {
-  onSelectCrypto: (crypto: Cryptocurrency) => void;
+  favorites: string[]
+  cryptos: Cryptocurrency[]
+  onSelectCrypto: (crypto: Cryptocurrency) => void
+  onRemoveFavorite: (symbol: string) => void
+  isFavorite: (symbol: string) => boolean
 }
 
-export function WatchlistView({ onSelectCrypto }: WatchlistViewProps) {
-  const { data: allCryptos } = useCryptocurrencies();
-  const { watchlist, removeFromWatchlist, loading } = useWatchlist();
-  const symbols = watchlist;
-  const prices = usePrices(symbols);
+/**
+ * WatchlistView Component
+ * Displays user's favorite cryptocurrencies
+ */
+export function WatchlistView({
+  favorites,
+  cryptos,
+  onSelectCrypto,
+  onRemoveFavorite,
+  isFavorite,
+}: WatchlistViewProps) {
+  // Note: callbacks are provided for potential future enhancements
+  void onSelectCrypto
+  void isFavorite
 
-  if (loading) {
-    return <div className="watchlist-view loading">載入中...</div>;
-  }
+  // Filter cryptos to only show favorites
+  const watchlistCryptos = cryptos.filter((c) => favorites.includes(c.symbol))
 
-  if (watchlist.length === 0) {
+  if (favorites.length === 0) {
     return (
       <div className="watchlist-view empty">
         <div className="empty-state">
@@ -28,60 +35,31 @@ export function WatchlistView({ onSelectCrypto }: WatchlistViewProps) {
           <small>點擊幣種列表右側的星號來收藏您關注的幣種</small>
         </div>
       </div>
-    );
+    )
   }
-
-  const watchlistCryptos = watchlist
-    .map((symbol) => allCryptos?.find((c) => c.symbol === symbol))
-    .filter((c) => c !== undefined) as Cryptocurrency[];
 
   return (
     <div className="watchlist-view">
-      <div className="watchlist-header">
-        <h2>自選清單 ({watchlist.length})</h2>
-      </div>
-
-      <div className="watchlist-container">
-        {watchlistCryptos.map((crypto) => {
-          const price = prices[crypto.symbol] || 0;
-
-          return (
-            <div
-              key={crypto.symbol}
-              className="watchlist-item"
-              onClick={() => onSelectCrypto({ ...crypto, price })}
-            >
-              <div className="watchlist-info">
-                <div className="watchlist-header-info">
-                  <span className="watchlist-name">{crypto.name}</span>
-                  <span className="watchlist-symbol">{crypto.symbol}</span>
-                </div>
-              </div>
-
-              <div className="watchlist-price">
-                <span className="price">
-                  $
-                  {price.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
-              </div>
-
-              <button
-                className="remove-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeFromWatchlist(crypto.symbol);
-                }}
-                title="移除"
-              >
-                ✕
-              </button>
+      <div className="watchlist-list">
+        {watchlistCryptos.map((crypto) => (
+          <div key={crypto.symbol} className="watchlist-item">
+            <div className="watchlist-item-content">
+              <h4>{crypto.name}</h4>
+              <span className="price">${crypto.price.toFixed(2)}</span>
             </div>
-          );
-        })}
+            <button
+              className="remove-btn"
+              onClick={() => onRemoveFavorite(crypto.symbol)}
+              title="Remove from watchlist"
+              aria-label={`Remove ${crypto.name} from watchlist`}
+            >
+              ✕
+            </button>
+          </div>
+        ))}
       </div>
     </div>
-  );
+  )
 }
+
+export default WatchlistView

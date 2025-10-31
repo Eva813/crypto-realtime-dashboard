@@ -1,0 +1,217 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+/* Header */
+.dashboard-header {
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Main Content */
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  padding: 24px;
+  flex: 1;
+}
+
+/* Sections */
+.dashboard-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-section h2 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 12px;
+}
+
+/* Crypto Section */
+.crypto-section {
+  min-height: 400px;
+}
+
+/* Watchlist Section */
+.watchlist-section {
+  position: sticky;
+  top: 100px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+/* Loading & Empty States */
+.loading,
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #999;
+  font-size: 14px;
+}
+
+.loading {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Chart Modal */
+.chart-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fade-in 0.2s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.chart-modal {
+  background: white;
+  border-radius: 8px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slide-up 0.3s ease;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+
+  .watchlist-section {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 20px;
+  }
+
+  .header-status {
+    width: 100%;
+  }
+
+  .dashboard-content {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .dashboard-section {
+    padding: 16px;
+  }
+
+  .chart-modal-overlay {
+    padding: 0;
+  }
+
+  .chart-modal {
+    border-radius: 0;
+    max-height: 100vh;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-header {
+    padding: 16px;
+  }
+
+  .dashboard-content {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .dashboard-section {
+    padding: 12px;
+  }
+
+  .dashboard-section h2 {
+    font-size: 14px;
+  }
+}
+
+/* Scrollbar styling */
+.watchlist-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.watchlist-section::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.watchlist-section::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.watchlist-section::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
