@@ -8,6 +8,22 @@ import { queryClient, queryKeys } from '../services/query/client'
 import { throttle } from '../utils/throttle'
 import type { PriceUpdate, KLine, Cryptocurrency } from '../utils/validation'
 
+const API_BASE_URL = 'https://api.binance.com/api/v3';
+
+const majorCryptos = new Map([
+  ['BTCUSDT', { name: 'Bitcoin', rank: 1 }],
+  ['ETHUSDT', { name: 'Ethereum', rank: 2 }],
+  ['BNBUSDT', { name: 'BNB', rank: 3 }],
+  ['SOLUSDT', { name: 'Solana', rank: 4 }],
+  ['XRPUSDT', { name: 'XRP', rank: 5 }],
+  ['DOGEUSDT', { name: 'Dogecoin', rank: 6 }],
+  ['ADAUSDT', { name: 'Cardano', rank: 7 }],
+  ['AVAXUSDT', { name: 'Avalanche', rank: 8 }],
+  ['SHIBUSDT', { name: 'Shiba Inu', rank: 9 }],
+  ['DOTUSDT', { name: 'Polkadot', rank: 10 }],
+]);
+
+
 /**
  * Custom Hook: useWebSocket (T022)
  * Manages WebSocket connection lifecycle and status
@@ -35,38 +51,6 @@ export function useWebSocket() {
 }
 
 /**
- * Custom Hook: useCryptoPrice (T023)
- * Fetch and manage single cryptocurrency price data
- */
-export function useCryptoPrice(symbol: string) {
-  const { data: crypto, isLoading, error } = useQuery({
-    queryKey: queryKeys.prices.single(symbol),
-    queryFn: async () => ({
-      symbol,
-      price: Math.random() * 100000,
-      changePercent24h: (Math.random() - 0.5) * 20,
-      change24h: (Math.random() - 0.5) * 5000,
-      volume24h: Math.random() * 1000000000,
-    }),
-    staleTime: 30 * 1000,
-    refetchInterval: 30 * 1000,
-  })
-
-  useEffect(() => {
-    const unsubscribe = binanceWebSocketService.subscribe(symbol, (update: PriceUpdate) => {
-      queryClient.setQueryData(queryKeys.prices.single(symbol), (old: any) => ({
-        ...old,
-        price: update.price,
-        changePercent24h: update.changePercent24h,
-      }))
-    })
-    return unsubscribe
-  }, [symbol])
-
-  return { crypto, isLoading, error }
-}
-
-/**
  * Custom Hook: useCryptoPrices (T024)
  * Fetch and manage multiple cryptocurrency prices
  */
@@ -87,29 +71,24 @@ export function useCryptoPrices(symbols: string[]) {
   const { data: cryptos = [], isLoading, error } = useQuery({
     queryKey: queryKeys.cryptos.list(),
     queryFn: async () => {
-      const mockCryptos: Cryptocurrency[] = [
-        {
-          id: '1',
-          symbol: 'BTCUSDT',
-          name: 'Bitcoin',
-          price: 43000,
-          change24h: 1200,
-          changePercent24h: 2.86,
-          volume24h: 28000000000,
-          marketCapRank: 1,
-        },
-        {
-          id: '2',
-          symbol: 'ETHUSDT',
-          name: 'Ethereum',
-          price: 2300,
-          change24h: 80,
-          changePercent24h: 3.6,
-          volume24h: 16000000000,
-          marketCapRank: 2,
-        },
-      ]
-      return mockCryptos
+      const response = await fetch(`${API_BASE_URL}/ticker/24hr`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data: any[] = await response.json();
+      
+      const filteredData = data.filter(ticker => majorCryptos.has(ticker.symbol));
+
+      return filteredData.map((ticker): Cryptocurrency => ({
+        id: ticker.symbol,
+        symbol: ticker.symbol,
+        name: majorCryptos.get(ticker.symbol)?.name || 'Unknown',
+        price: parseFloat(ticker.lastPrice),
+        change24h: parseFloat(ticker.priceChange),
+        changePercent24h: parseFloat(ticker.priceChangePercent),
+        volume24h: parseFloat(ticker.quoteVolume),
+        marketCapRank: majorCryptos.get(ticker.symbol)?.rank || 999,
+      }));
     },
     staleTime: 30 * 1000,
   })
@@ -136,29 +115,19 @@ export function useKLineChart(symbol: string) {
   const { data: klines = [], isLoading, error, refetch } = useQuery({
     queryKey: queryKeys.klines.detail(symbol, selectedTimeFrame),
     queryFn: async () => {
-      const mockKlines: KLine[] = []
-      const now = Math.floor(Date.now() / 1000)
-      const intervals = {
-        '1h': 3600,
-        '4h': 14400,
-        '1d': 86400,
-        '1w': 604800,
+      const response = await fetch(`${API_BASE_URL}/klines?symbol=${symbol}&interval=${selectedTimeFrame}&limit=100`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-      const intervalSecs = intervals[selectedTimeFrame]
-
-      for (let i = 50; i > 0; i--) {
-        const time = now - i * intervalSecs
-        const basePrice = 40000 + Math.random() * 5000
-        mockKlines.push({
-          time,
-          open: basePrice,
-          high: basePrice + Math.random() * 2000,
-          low: basePrice - Math.random() * 2000,
-          close: basePrice + (Math.random() - 0.5) * 3000,
-          volume: Math.random() * 1000000,
-        })
-      }
-      return mockKlines
+      const data: any[][] = await response.json();
+      return data.map((d): KLine => ({
+        time: d[0] / 1000,
+        open: parseFloat(d[1]),
+        high: parseFloat(d[2]),
+        low: parseFloat(d[3]),
+        close: parseFloat(d[4]),
+        volume: parseFloat(d[5]),
+      }));
     },
     staleTime: 60 * 1000,
   })
@@ -246,7 +215,7 @@ export function useWatchlist() {
  */
 export function useCrypto(symbol?: string) {
   const websocket = useWebSocket()
-  const { cryptos, isLoading: cryptosLoading } = useCryptoPrices(symbol ? [symbol] : [])
+  const { cryptos, isLoading: cryptosLoading } = useCryptoPrices(Array.from(majorCryptos.keys()))
   const watchlist = useWatchlist()
   const { selectedTimeFrame } = useChartStore()
 
