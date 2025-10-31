@@ -88,17 +88,17 @@ Establish development environment with TypeScript, React, build tooling, and tes
 
 ### Implementation Tasks
 
-- [ ] T001 Create project structure per implementation plan in `src/`, `tests/`, `public/` directories
+- [x] T001 Create project structure per implementation plan in `src/`, `tests/`, `public/` directories
 
-- [ ] T002 Install and configure TypeScript 5.x with strict mode enabled in `tsconfig.json`
+- [x] T002 Install and configure TypeScript 5.x with strict mode enabled in `tsconfig.json`
 
-- [ ] T003 Install and configure React 18 with React Compiler enabled in `vite.config.ts`
+- [x] T003 Install and configure React 18 with React Compiler enabled in `vite.config.ts`
 
-- [ ] T004 Install and configure ESLint with zero-warnings policy in `eslint.config.js`
+- [x] T004 Install and configure ESLint with zero-warnings policy in `eslint.config.js`
 
-- [ ] T005 Install and configure Vitest + Playwright for unit and E2E testing in `vitest.config.ts` and `playwright.config.ts`
+- [x] T005 Install and configure Vitest + Playwright for unit and E2E testing in `vitest.config.ts` and `playwright.config.ts`
 
-- [ ] T006 Verify CI/CD pipeline runs `npm test && npm run lint` successfully
+- [x] T006 Verify CI/CD pipeline runs `npm test && npm run lint` successfully
 
 ---
 
@@ -123,59 +123,59 @@ Establish type system, core services, state management, and React hooks that all
 
 #### Type Definitions & Validation
 
-- [ ] T007 [P] Create TypeScript interfaces and Zod schemas for `Cryptocurrency` in `src/types/crypto.ts` and `src/utils/validation.ts`
+- [x] T007 [P] Create TypeScript interfaces and Zod schemas for `Cryptocurrency` in `src/types/crypto.ts` and `src/utils/validation.ts`
 
-- [ ] T008 [P] Create TypeScript interfaces and Zod schemas for `PriceUpdate` in `src/types/crypto.ts` and `src/utils/validation.ts`
+- [x] T008 [P] Create TypeScript interfaces and Zod schemas for `PriceUpdate` in `src/types/crypto.ts` and `src/utils/validation.ts`
 
-- [ ] T009 [P] Create TypeScript interfaces and Zod schemas for `KLine` in `src/types/chart.ts` and `src/utils/validation.ts`
+- [x] T009 [P] Create TypeScript interfaces and Zod schemas for `KLine` in `src/types/chart.ts` and `src/utils/validation.ts`
 
-- [ ] T010 [P] Create TypeScript interfaces and Zod schemas for `Watchlist` in `src/types/storage.ts` and `src/utils/validation.ts`
+- [x] T010 [P] Create TypeScript interfaces and Zod schemas for `Watchlist` in `src/types/storage.ts` and `src/utils/validation.ts`
 
-- [ ] T011 [P] Create TypeScript interfaces and Zod schemas for `ConnectionStatus` in `src/types/websocket.ts` and `src/utils/validation.ts`
+- [x] T011 [P] Create TypeScript interfaces and Zod schemas for `ConnectionStatus` in `src/types/websocket.ts` and `src/utils/validation.ts`
 
-- [ ] T012 [P] Create TypeScript interfaces and Zod schemas for `ChartConfig` in `src/types/chart.ts` and `src/utils/validation.ts`
+- [x] T012 [P] Create TypeScript interfaces and Zod schemas for `ChartConfig` in `src/types/chart.ts` and `src/utils/validation.ts`
 
 #### Service Layer
 
-- [ ] T013 [P] Implement `BinanceWebSocketService` in `src/services/binance/websocket.ts` with connect, disconnect, subscribe, unsubscribe methods and proper error handling
+- [x] T013 [P] Implement `BinanceWebSocketService` in `src/services/binance/websocket.ts` with connect, disconnect, subscribe, unsubscribe methods and proper error handling
 
-- [ ] T014 [P] Implement `MapperService` in `src/services/binance/mapper.ts` to convert Binance API messages to domain types (PriceUpdate, KLine)
+- [x] T014 [P] Implement `MapperService` in `src/services/binance/mapper.ts` to convert Binance API messages to domain types (PriceUpdate, KLine)
 
-- [ ] T015 [P] Implement `StorageService` in `src/services/storage/localStorage.ts` with localStorage wrapper, fallback to memory storage, and watchlist operations
+- [x] T015 [P] Implement `StorageService` in `src/services/storage/localStorage.ts` with localStorage wrapper, fallback to memory storage, and watchlist operations
 
-- [ ] T016 Create TanStack Query client configuration in `src/services/query/client.ts` with staleTime=30s, retry=3 with exponential backoff
+- [x] T016 Create TanStack Query client configuration in `src/services/query/client.ts` with staleTime=30s, retry=3 with exponential backoff
 
-- [ ] T017 Create utility functions in `src/utils/format.ts` for formatting prices, percentages, and volumes (e.g., formatPrice, formatPercent)
+- [x] T017 Create utility functions in `src/utils/format.ts` for formatting prices, percentages, and volumes (e.g., formatPrice, formatPercent)
 
-- [ ] T018 Create throttle/debounce utilities in `src/utils/throttle.ts` for managing high-frequency WebSocket updates
+- [x] T018 Create throttle/debounce utilities in `src/utils/throttle.ts` for managing high-frequency WebSocket updates
 
 #### Global State Management
 
-- [ ] T019 [P] Create Zustand WebSocket store in `src/stores/websocketStore.ts` with status, error, retryCount, and actions (setStatus, setError, incrementRetryCount)
+- [x] T019 [P] Create Zustand WebSocket store in `src/stores/websocketStore.ts` with status, error, retryCount, and actions (setStatus, setError, incrementRetryCount)
 
-- [ ] T020 [P] Create Zustand Watchlist store in `src/stores/watchlistStore.ts` with favorites array, isStorageAvailable flag, and operations (add, remove, clear, isFavorite)
+- [x] T020 [P] Create Zustand Watchlist store in `src/stores/watchlistStore.ts` with favorites array, isStorageAvailable flag, and operations (add, remove, clear, isFavorite)
 
-- [ ] T021 Create React Query setup with custom hooks integration in `src/services/query/hooks.ts`
+- [x] T021 Create React Query setup with custom hooks integration in `src/services/query/hooks.ts`
 
 #### Custom React Hooks
 
-- [ ] T022 [P] Implement `useWebSocket` hook in `src/hooks/useWebSocket.ts` to manage WebSocket connection lifecycle and connection status
+- [x] T022 [P] Implement `useWebSocket` hook in `src/hooks/useWebSocket.ts` to manage WebSocket connection lifecycle and connection status
 
-- [ ] T023 [P] Implement `useCryptoPrice` hook in `src/hooks/useCryptoPrice.ts` to fetch and manage single cryptocurrency price data via TanStack Query
+- [x] T023 [P] Implement `useCryptoPrice` hook in `src/hooks/useCryptoPrice.ts` to fetch and manage single cryptocurrency price data via TanStack Query
 
-- [ ] T024 [P] Implement `useCryptoPrices` hook in `src/hooks/useCryptoPrices.ts` to fetch and manage multiple cryptocurrency prices via TanStack Query
+- [x] T024 [P] Implement `useCryptoPrices` hook in `src/hooks/useCryptoPrices.ts` to fetch and manage multiple cryptocurrency prices via TanStack Query
 
-- [ ] T025 Implement `useKLineChart` hook in `src/hooks/useKLineChart.ts` to fetch K-line data with interval switching capability
+- [x] T025 Implement `useKLineChart` hook in `src/hooks/useKLineChart.ts` to fetch K-line data with interval switching capability
 
-- [ ] T026 Implement `useWatchlist` hook in `src/hooks/useWatchlist.ts` to manage watchlist state and localStorage sync
+- [x] T026 Implement `useWatchlist` hook in `src/hooks/useWatchlist.ts` to manage watchlist state and localStorage sync
 
 #### Testing Foundation
 
-- [ ] T027 Create test utilities and mocks in `tests/setup.ts` and `tests/mocks/binance.ts` for WebSocket and API responses
+- [x] T027 Create test utilities and mocks in `tests/setup.ts` and `tests/mocks/binance.ts` for WebSocket and API responses
 
-- [ ] T028 Write integration tests for storage service fallback behavior in `tests/integration/storage.test.ts`
+- [x] T028 Write integration tests for storage service fallback behavior in `tests/integration/storage.test.ts`
 
-- [ ] T029 Write integration tests for WebSocket reconnection logic in `tests/integration/websocket.test.ts`
+- [x] T029 Write integration tests for WebSocket reconnection logic in `tests/integration/websocket.test.ts`
 
 ---
 
@@ -200,37 +200,37 @@ Display real-time cryptocurrency prices with automatic 30-second updates and vis
 
 #### Components
 
-- [ ] T030 [US1] Create `CryptoPriceCard` component in `src/components/crypto/CryptoPriceCard.tsx` displaying price, 24h change, volume with color coding
+- [x] T030 [US1] Create `CryptoPriceCard` component in `src/components/crypto/CryptoPriceCard.tsx` displaying price, 24h change, volume with color coding
 
-- [ ] T031 [US1] Create `PriceChangeIndicator` component in `src/components/crypto/PriceChangeIndicator.tsx` for visual feedback with animation
+- [x] T031 [US1] Create `PriceChangeIndicator` component in `src/components/crypto/PriceChangeIndicator.tsx` for visual feedback with animation
 
-- [ ] T032 [US1] Create `ConnectionStatus` indicator component in `src/components/common/ConnectionStatus.tsx` showing WebSocket state
+- [x] T032 [US1] Create `ConnectionStatus` indicator component in `src/components/common/ConnectionStatus.tsx` showing WebSocket state
 
-- [ ] T033 [P] [US1] Create `CryptoList` component in `src/components/crypto/CryptoList.tsx` displaying grid/list of cryptocurrency cards
+- [x] T033 [P] [US1] Create `CryptoList` component in `src/components/crypto/CryptoList.tsx` displaying grid/list of cryptocurrency cards
 
 #### Page & Integration
 
-- [ ] T034 [US1] Create `Dashboard` page component in `src/pages/Dashboard.tsx` integrating price display with WebSocket connection management
+- [x] T034 [US1] Create `Dashboard` page component in `src/pages/Dashboard.tsx` integrating price display with WebSocket connection management
 
-- [ ] T035 [US1] Implement initial data loading for 10 mainstream cryptocurrencies in Dashboard (fetch historical prices via REST or mock)
+- [x] T035 [US1] Implement initial data loading for 10 mainstream cryptocurrencies in Dashboard (fetch historical prices via REST or mock)
 
-- [ ] T036 [US1] Connect WebSocket service to Dashboard for real-time price updates using `useWebSocket` hook
+- [x] T036 [US1] Connect WebSocket service to Dashboard for real-time price updates using `useWebSocket` hook
 
-- [ ] T037 [US1] Implement automatic price update subscription with 30-second refresh cycle in Dashboard
+- [x] T037 [US1] Implement automatic price update subscription with 30-second refresh cycle in Dashboard
 
-- [ ] T038 [US1] Implement visual feedback for price changes (color animation, direction indicator) in CryptoPriceCard
+- [x] T038 [US1] Implement visual feedback for price changes (color animation, direction indicator) in CryptoPriceCard
 
-- [ ] T039 [US1] Add offline detection and "Connection lost" notification in ConnectionStatus component
+- [x] T039 [US1] Add offline detection and "Connection lost" notification in ConnectionStatus component
 
-- [ ] T040 [P] [US1] Implement error boundary and fallback UI for price display failures in Dashboard
+- [x] T040 [P] [US1] Implement error boundary and fallback UI for price display failures in Dashboard
 
 #### Testing
 
-- [ ] T041 Write component tests for CryptoPriceCard with mock data in `tests/unit/components/CryptoPriceCard.test.tsx`
+- [x] T041 Write component tests for CryptoPriceCard with mock data in `tests/unit/components/CryptoPriceCard.test.tsx`
 
-- [ ] T042 Write component tests for CryptoList with multiple cryptos in `tests/unit/components/CryptoList.test.tsx`
+- [x] T042 Write component tests for CryptoList with multiple cryptos in `tests/unit/components/CryptoList.test.tsx`
 
-- [ ] T043 Write E2E test for price display and update flow in `e2e/crypto-prices.spec.ts`
+- [x] T043 Write E2E test for price display and update flow in `e2e/crypto-prices.spec.ts`
 
 ---
 
@@ -254,7 +254,7 @@ Display interactive K-line charts for selected cryptocurrencies with support for
 
 #### Components
 
-- [ ] T044 [P] [US2] Create `KLineChart` component wrapper in `src/components/chart/KLineChart.tsx` integrating TradingView Lightweight Charts library
+- [x] T044 [P] [US2] Create `KLineChart` component wrapper in `src/components/chart/KLineChart.tsx` integrating TradingView Lightweight Charts library
 
 - [ ] T045 [US2] Create `ChartControls` component in `src/components/chart/ChartControls.tsx` with timeframe selector (1h, 4h, 1d, 1w)
 
@@ -264,11 +264,11 @@ Display interactive K-line charts for selected cryptocurrencies with support for
 
 #### Page & Integration
 
-- [ ] T048 [P] [US2] Create `CryptoDetail` page component in `src/pages/CryptoDetail.tsx` displaying K-line chart for selected cryptocurrency
+- [x] T048 [P] [US2] Create `CryptoDetail` page component in `src/pages/CryptoDetail.tsx` displaying K-line chart for selected cryptocurrency
 
-- [ ] T049 [US2] Implement chart data fetching in CryptoDetail using `useKLineChart` hook with dynamic interval switching
+- [x] T049 [US2] Implement chart data fetching in CryptoDetail using `useKLineChart` hook with dynamic interval switching
 
-- [ ] T050 [US2] Implement timeframe switching logic with chart update (< 500ms redraw time) in ChartControls
+- [x] T050 [US2] Implement timeframe switching logic with chart update (< 500ms redraw time) in ChartControls
 
 - [ ] T051 [US2] Implement real-time candle update via WebSocket in KLineChart component
 
@@ -307,17 +307,17 @@ Allow users to add/remove cryptocurrencies to a persistent watchlist stored in l
 
 #### Components
 
-- [ ] T057 [P] [US3] Create `FavoriteButton` component in `src/components/crypto/FavoriteButton.tsx` with star icon and toggle state
+- [x] T057 [P] [US3] Create `FavoriteButton` component in `src/components/crypto/FavoriteButton.tsx` with star icon and toggle state
 
-- [ ] T058 [P] [US3] Create `WatchlistView` component in `src/components/watchlist/WatchlistView.tsx` displaying list of favorite cryptocurrencies
+- [x] T058 [P] [US3] Create `WatchlistView` component in `src/components/watchlist/WatchlistView.tsx` displaying list of favorite cryptocurrencies
 
-- [ ] T059 [US3] Create `StorageWarning` component in `src/components/common/StorageWarning.tsx` for localStorage unavailable notification
+- [x] T059 [US3] Create `StorageWarning` component in `src/components/common/StorageWarning.tsx` for localStorage unavailable notification
 
 #### Integration
 
-- [ ] T060 [P] [US3] Implement watchlist persistence in `useWatchlist` hook with localStorage sync and memory fallback
+- [x] T060 [P] [US3] Implement watchlist persistence in `useWatchlist` hook with localStorage sync and memory fallback
 
-- [ ] T061 [US3] Integrate FavoriteButton into CryptoPriceCard and CryptoDetail components
+- [x] T061 [US3] Integrate FavoriteButton into CryptoPriceCard and CryptoDetail components
 
 - [ ] T062 [US3] Add WatchlistView as sidebar/modal in Dashboard and CryptoDetail pages
 
@@ -353,13 +353,13 @@ Ensure code clarity and provide comprehensive comments for WebSocket and TanStac
 
 #### Documentation
 
-- [ ] T067 [US4] Add comprehensive JSDoc comments to `BinanceWebSocketService` in `src/services/binance/websocket.ts`
+- [x] T067 [US4] Add comprehensive JSDoc comments to `BinanceWebSocketService` in `src/services/binance/websocket.ts`
 
-- [ ] T068 [US4] Add comprehensive JSDoc comments to all custom hooks in `src/hooks/` directory
+- [x] T068 [US4] Add comprehensive JSDoc comments to all custom hooks in `src/hooks/` directory
 
-- [ ] T069 [US4] Create developer quickstart guide in `docs/developer-guide.md` explaining WebSocket connection, TanStack Query caching, state management
+- [x] T069 [US4] Create developer quickstart guide in `docs/developer-guide.md` explaining WebSocket connection, TanStack Query caching, state management
 
-- [ ] T070 [US4] Create inline code comments for complex logic in WebSocket reconnection, data mapping, and throttling utilities
+- [x] T070 [US4] Create inline code comments for complex logic in WebSocket reconnection, data mapping, and throttling utilities
 
 ---
 

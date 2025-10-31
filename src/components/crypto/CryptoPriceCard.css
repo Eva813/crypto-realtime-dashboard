@@ -47,6 +47,8 @@
 
 /* Favorite button */
 .favorite-btn {
+  position: relative;
+  z-index: 2;
   background: none;
   border: none;
   font-size: 20px;

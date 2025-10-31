@@ -1,90 +1,48 @@
-import { useEffect, useRef } from "react";
-import { createChart, ColorType, CandlestickSeries } from "lightweight-charts";
-import type { Cryptocurrency, TimeFrame, KLine } from "../types/index";
-import "./KLineChart.css";
+import { useEffect, useRef } from 'react';
+import { createChart, ColorType, CandlestickSeries } from 'lightweight-charts';
+import { useKLineChart } from '../hooks/useCrypto';
+import { useChartStore } from '../stores';
+import type { Cryptocurrency, TimeFrame } from '../types/index';
+import './KLineChart.css';
 
 interface KLineChartProps {
   crypto: Cryptocurrency | null;
   onClose: () => void;
 }
 
-// Mock K-line data generator
-function generateMockKLines(
-  timeFrame: TimeFrame,
-  count: number = 100,
-): KLine[] {
-  const lines: KLine[] = [];
-  let basePrice = 40000;
-  let time = Math.floor(Date.now() / 1000) - count * 3600;
-
-  const timeIntervals: Record<TimeFrame, number> = {
-    "1h": 3600,
-    "4h": 14400,
-    "1d": 86400,
-    "1w": 604800,
-  };
-
-  const interval = timeIntervals[timeFrame];
-
-  for (let i = 0; i < count; i++) {
-    const change = (Math.random() - 0.5) * 2000;
-    const open = basePrice;
-    const close = basePrice + change;
-    const high = Math.max(open, close) + Math.random() * 1000;
-    const low = Math.min(open, close) - Math.random() * 1000;
-    const volume = Math.random() * 1000000;
-
-    lines.push({
-      time,
-      open,
-      high,
-      low,
-      close,
-      volume,
-    });
-
-    basePrice = close;
-    time += interval;
-  }
-
-  return lines;
-}
-
 export function KLineChart({ crypto, onClose }: KLineChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { selectedTimeFrame, setTimeFrame } = useChartStore();
+
+  // Fetch real data using the hook
+  const { klines, isLoading, error } = useKLineChart(crypto?.symbol || '');
 
   useEffect(() => {
-    if (!containerRef.current || !crypto) return;
+    if (!containerRef.current || !crypto || klines.length === 0) return;
 
-    // Create chart
     const chart = createChart(containerRef.current, {
       layout: {
-        background: { type: ColorType.Solid, color: "#ffffff" },
-        textColor: "#333",
+        background: { type: ColorType.Solid, color: '#ffffff' },
+        textColor: '#333',
       },
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight,
     });
 
-    // Create candlestick series using the v5 API
     const candleSeries = chart.addSeries(CandlestickSeries, {
-      upColor: "#16c784",
-      downColor: "#ea3943",
-      wickUpColor: "#16c784",
-      wickDownColor: "#ea3943",
-      borderUpColor: "#16c784",
-      borderDownColor: "#ea3943",
+      upColor: '#16c784',
+      downColor: '#ea3943',
+      wickUpColor: '#16c784',
+      wickDownColor: '#ea3943',
+      borderUpColor: '#16c784',
+      borderDownColor: '#ea3943',
     });
 
-    // Add mock data - cast time to proper type
-    const klines = generateMockKLines("1d", 50);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // Use fetched k-line data
     candleSeries.setData(klines as any);
 
-    // Fit content
     chart.timeScale().fitContent();
 
-    // Handle resize
     const handleResize = () => {
       if (containerRef.current) {
         chart.applyOptions({
@@ -94,17 +52,19 @@ export function KLineChart({ crypto, onClose }: KLineChartProps) {
       }
     };
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
       chart.remove();
     };
-  }, [crypto]);
+  }, [crypto, klines]); // Re-render chart if crypto or klines change
 
   if (!crypto) {
     return null;
   }
+
+  const timeFrames: TimeFrame[] = ['1h', '4h', '1d', '1w'];
 
   return (
     <div className="kline-chart-container">
@@ -116,7 +76,7 @@ export function KLineChart({ crypto, onClose }: KLineChartProps) {
           <div className="price-display">
             <span className="current-price">
               $
-              {crypto.price.toLocaleString("en-US", {
+              {crypto.price.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
@@ -129,13 +89,21 @@ export function KLineChart({ crypto, onClose }: KLineChartProps) {
       </div>
 
       <div className="kline-timeframes">
-        <button className="timeframe-btn active">1H</button>
-        <button className="timeframe-btn">4H</button>
-        <button className="timeframe-btn">1D</button>
-        <button className="timeframe-btn">1W</button>
+        {timeFrames.map((tf) => (
+          <button
+            key={tf}
+            className={`timeframe-btn ${selectedTimeFrame === tf ? 'active' : ''}`}
+            onClick={() => setTimeFrame(tf)}
+          >
+            {tf.toUpperCase()}
+          </button>
+        ))}
       </div>
 
-      <div className="kline-chart" ref={containerRef}></div>
+      <div className="kline-chart" ref={containerRef}>
+        {isLoading && <div className="chart-loading">Loading Chart...</div>}
+        {error && <div className="chart-error">Failed to load chart data.</div>}
+      </div>
     </div>
   );
 }
