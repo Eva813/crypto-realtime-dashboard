@@ -2,10 +2,20 @@ import { expect, afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
 import * as matchers from "@testing-library/jest-dom/matchers";
 
-// 擴展 Vitest 的 expect 使其包含 jest-dom 的斷言方法
+// Mock React.act for React 19 compatibility
+import React from "react";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+if (typeof (React as any).act === "undefined") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (React as any).act = (callback: () => void) => {
+    callback();
+  };
+}
+
+// Extend Vitest's expect with jest-dom matchers
 expect.extend(matchers);
 
-// 在每個測試之後自動清理 React Testing Library 的 DOM
+// Auto-cleanup after each test
 afterEach(() => {
   cleanup();
 });

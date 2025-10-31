@@ -1,35 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConnectionStatus } from "./components/ConnectionStatus";
+import { CryptoList } from "./components/CryptoList";
+import { WatchlistView } from "./components/WatchlistView";
+import { KLineChart } from "./components/KLineChart";
+import type { Cryptocurrency } from "./types/index";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30 * 1000, // 30 seconds
+      gcTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
+
+function AppContent() {
+  const [selectedCrypto, setSelectedCrypto] = useState<Cryptocurrency | null>(
+    null,
+  );
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app">
+      <header className="app-header">
+        <h1>加密貨幣即時行情</h1>
+        <ConnectionStatus />
+      </header>
+
+      <div className="app-container">
+        <CryptoList onSelectCrypto={setSelectedCrypto} />
+        <WatchlistView onSelectCrypto={setSelectedCrypto} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+      {selectedCrypto && (
+        <KLineChart
+          crypto={selectedCrypto}
+          onClose={() => setSelectedCrypto(null)}
+        />
+      )}
+    </div>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppContent />
+    </QueryClientProvider>
+  );
+}
+
+export default App;

@@ -18,6 +18,8 @@
     "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.5",
+    "lightweight-charts": "^5.0.9",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
