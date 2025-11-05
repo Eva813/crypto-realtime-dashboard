@@ -129,11 +129,12 @@ export function KLineChart({ crypto, onClose }: KLineChartProps) {
 
   // 處理 loading 狀態的平滑過渡
   useEffect(() => {
-    if (klines.length === 0 || !isChartReady) {
-      // 重置為 loading 狀態
+    // 如果正在獲取數據或圖表未就緒，顯示 loading
+    // 但如果請求已完成且沒有數據，則不顯示 loading（讓錯誤訊息顯示）
+    if (isFetching || (klines.length === 0 && !error)) {
       setShowLoading(true);
       setIsLoadingFadingOut(false);
-    } else {
+    } else if (klines.length > 0 && isChartReady) {
       // 數據載入完成且圖表已就緒，開始淡出動畫
       setIsLoadingFadingOut(true);
       // 等待淡出動畫完成後完全隱藏
@@ -142,8 +143,12 @@ export function KLineChart({ crypto, onClose }: KLineChartProps) {
       }, 300); // 與 CSS 動畫時間一致
 
       return () => clearTimeout(timer);
+    } else {
+      // 其他情況（例如有錯誤），立即隱藏 loading
+      setShowLoading(false);
+      setIsLoadingFadingOut(false);
     }
-  }, [klines.length, isChartReady]);
+  }, [klines.length, isChartReady, isFetching, error]);
 
   // 安全檢查：如果沒有選中的加密貨幣，不渲染任何內容
   if (!crypto) {
@@ -220,11 +225,15 @@ export function KLineChart({ crypto, onClose }: KLineChartProps) {
             <ChartLoadingSpinner />
           </div>
         )}
-        {!isFetching && error && (
+        {!isFetching && !showLoading && klines.length === 0 && (
           <div className="chart-error">
             <div className="error-icon">⚠️</div>
-            <p>圖表載入失敗</p>
-            <p className="error-detail">請稍後再試或重新整理頁面</p>
+            <p>{error ? "圖表載入失敗" : "無法取得圖表數據"}</p>
+            <p className="error-detail">
+              {error
+                ? "請稍後再試或重新整理頁面"
+                : "該加密貨幣可能暫無 K 線數據"}
+            </p>
           </div>
         )}
         {/* 當數據準備好時，圖表會通過 useEffect 自動渲染到此容器 */}

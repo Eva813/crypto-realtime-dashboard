@@ -114,10 +114,13 @@
   border-radius: 8px;
   max-width: 900px;
   width: 100%;
+  min-height: 600px;
   max-height: 80vh;
-  overflow: auto;
+  overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slide-up 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes slide-up {
