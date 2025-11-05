@@ -79,13 +79,17 @@ export class BinanceWebSocketService {
    */
   connect(): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
+      console.log("WebSocket already connected");
       return;
     }
 
     try {
-      this.ws = new WebSocket("wss://stream.binance.com:9443/ws");
+      const wsUrl = "wss://stream.binance.com:9443/ws";
+      console.log(`Connecting to WebSocket: ${wsUrl}`);
+      this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
+        console.log("WebSocket connected successfully");
         this.reconnectAttempts = 0;
         this.isConnected = true;
         this.notifyConnectionStatus(true);
@@ -95,12 +99,26 @@ export class BinanceWebSocketService {
         this.handleMessage(event.data);
       };
 
-      this.ws.onerror = () => {
-        console.error("WebSocket error");
+      this.ws.onerror = (event: Event) => {
+        console.error("WebSocket error occurred:", {
+          type: event.type,
+          target: event.target,
+          timestamp: new Date().toISOString(),
+          readyState: this.ws?.readyState,
+          readyStateText: this.getReadyStateText(this.ws?.readyState),
+          reconnectAttempts: this.reconnectAttempts,
+          url: wsUrl,
+        });
         this.notifyConnectionStatus(false);
       };
 
-      this.ws.onclose = () => {
+      this.ws.onclose = (event: CloseEvent) => {
+        console.log("WebSocket closed:", {
+          code: event.code,
+          reason: event.reason || "No reason provided",
+          wasClean: event.wasClean,
+          timestamp: new Date().toISOString(),
+        });
         this.isConnected = false;
         this.notifyConnectionStatus(false);
         this.attemptReconnect();
@@ -108,6 +126,24 @@ export class BinanceWebSocketService {
     } catch (error) {
       console.error("Failed to create WebSocket:", error);
       this.attemptReconnect();
+    }
+  }
+
+  /**
+   * Get human-readable WebSocket ready state
+   */
+  private getReadyStateText(readyState: number | undefined): string {
+    switch (readyState) {
+      case WebSocket.CONNECTING:
+        return "CONNECTING (0)";
+      case WebSocket.OPEN:
+        return "OPEN (1)";
+      case WebSocket.CLOSING:
+        return "CLOSING (2)";
+      case WebSocket.CLOSED:
+        return "CLOSED (3)";
+      default:
+        return `UNKNOWN (${readyState})`;
     }
   }
 

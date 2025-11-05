@@ -121,6 +121,7 @@
  * 1. position: absolute 覆蓋整個圖表容器
  * 2. 半透明背景提供更好的視覺層次
  * 3. z-index 確保 loading 在最上層
+ * 4. 平滑的淡入淡出過渡效果
  */
 .chart-loading-overlay {
   position: absolute;
@@ -131,10 +132,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(154, 192, 52, 0.98); /* 幾乎不透明的白色背景 */
+  background-color: rgba(255, 255, 255, 0.98); /* 幾乎不透明的白色背景 */
   z-index: 100; /* 提高 z-index 確保在最上層 */
-  /* 平滑淡入效果 */
-  animation: fadeIn 0.2s ease-in;
+  /* 平滑淡入淡出效果，統一為 0.3s */
+  animation: fadeIn 0.3s ease-out;
+  transition: opacity 0.3s ease-out;
+}
+
+/* Loading 淡出效果 */
+.chart-loading-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* 確保 spinner 在 overlay 內可見 */
