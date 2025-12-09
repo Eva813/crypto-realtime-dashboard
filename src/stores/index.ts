@@ -280,23 +280,30 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => {
     },
 
     /**
-     * 獲取健康檢查結果
+     * 獲取健康檢查結果（公開連接診斷）
      *
-     * 💡 包含：
+     * 💡 返回用戶實際使用的公開連接的詳細健康狀態
+     *
+     * 包含：
      * - isHealthy: 是否健康
-     * - checks: 各項檢查結果
-     *   - connection: 連接檢查
-     *   - heartbeat: 心跳檢查
-     *   - latency: 延遲檢查
-     *   - errorRate: 錯誤率檢查
+     * - status: 健康狀態分級（EXCELLENT/GOOD/POOR/CRITICAL）
+     * - qualityScore: 連接品質評分（0-100）
+     * - lastMessageAt: 最後訊息時間戳
+     * - timeSinceLastMessage: 距離最後訊息的時間（毫秒）
+     * - isTimeout: 是否超過心跳超時
+     * - metrics: 詳細性能指標
+     *   - averageLatency: 平均延遲（毫秒）
+     *   - messageRate: 訊息速率（訊息/秒）
+     *   - qualityScore: 品質評分（0-100）
      *
      * 🎯 用途：
      * - 診斷連接問題
-     * - 自動觸發重連
-     * - 提供健康狀態儀表板
+     * - 監控連接品質
+     * - 觸發自動重連邏輯
+     * - 提供用戶友好的狀態顯示
      */
     getHealthStatus: () => {
-      return manager.performHealthCheck();
+      return manager.getPublicConnectionHealth();
     },
 
     /**

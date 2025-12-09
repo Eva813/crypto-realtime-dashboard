@@ -61,6 +61,8 @@ import { MessageQueue } from "../performance/MessageQueue";
 import { MessageRouter } from "../performance/MessageRouter";
 import type { PriceUpdate, KLine } from "../../../utils/validation";
 import type { TimeFrame, UnsubscribeFunction } from "../types";
+import type { HealthCheckResult } from "./HealthMonitor";
+import type { ConnectionState } from "../types/connection.types";
 
 /**
  * 連接管理器配置
@@ -93,6 +95,34 @@ export type ConnectionManagerEventType =
  * 事件監聽器類型
  */
 export type ConnectionManagerEventListener = (data?: unknown) => void;
+
+/**
+ * 連接管理器事件映射類型
+ *
+ * 💡 為什麼使用映射類型？
+ * 1. 類型安全：每個事件的參數類型明確
+ * 2. 無 any：符合 ESLint @typescript-eslint/no-explicit-any
+ * 3. 智能推導：TypeScript 能自動推導監聽器的參數類型
+ * 4. 可維護性：事件類型定義集中在一個地方
+ *
+ * @example
+ * const unsubscribe = manager.on('stateChange', (state) => {
+ *   // state 自動推導為 ConnectionState 類型
+ *   console.log(state.status)
+ * })
+ */
+type ConnectionManagerEventMap = {
+  /** 連接狀態變化：傳遞 ConnectionState */
+  stateChange: ConnectionState;
+  /** 連接錯誤：傳遞 Error */
+  error: Error;
+  /** 重連開始：無參數 */
+  reconnecting: undefined;
+  /** 連接成功：無參數 */
+  connected: undefined;
+  /** 連接斷開：無參數 */
+  disconnected: undefined;
+};
 
 /**
  * WebSocket 連接管理器
@@ -553,6 +583,27 @@ export class ConnectionManager {
     return this.connectionPool.performHealthCheck();
   }
 
+  /**
+   * 獲取公開連接的詳細健康檢查結果
+   *
+   * 🎯 返回公開連接（用戶實際使用的連接）的健康狀態
+   * 包含詳細的診斷信息：延遲、訊息率、品質評分等
+   *
+   * @returns 公開連接的健康檢查結果
+   *
+   * @example
+   * const health = manager.getPublicConnectionHealth()
+   * if (health.isHealthy) {
+   *   console.log('Connection quality:', health.qualityScore)
+   * } else {
+   *   console.warn('Connection has issues:', health.status)
+   * }
+   */
+  getPublicConnectionHealth(): HealthCheckResult {
+    const connection = this.connectionPool.getPublicConnection();
+    return connection.getHealthMonitor().performHealthCheck();
+  }
+
   // ============================================================================
   // 事件系統（EventEmitter 模式）
   // ============================================================================
@@ -560,26 +611,35 @@ export class ConnectionManager {
   /**
    * 監聽事件
    *
+   * 💡 使用泛型提供類型安全的事件監聽
+   *
    * @param event - 事件名稱
-   * @param listener - 事件監聽器
+   * @param listener - 事件監聽器（參數類型根據事件自動推導）
    * @returns 取消監聽的函數
    *
    * @example
+   * // state 自動推導為 ConnectionState 類型
    * const unsubscribe = manager.on('stateChange', (state) => {
-   *   console.log('Connection state:', state)
+   *   console.log('Connection state:', state.status)
    * })
    */
-  on(
-    event: ConnectionManagerEventType,
-    listener: ConnectionManagerEventListener,
+  on<E extends ConnectionManagerEventType>(
+    event: E,
+    listener: (data: ConnectionManagerEventMap[E]) => void,
   ): () => void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
-    this.eventListeners.get(event)!.add(listener);
+    const typedListener = listener as ConnectionManagerEventListener;
+    this.eventListeners.get(event)!.add(typedListener);
 
     // 返回取消監聽函數
-    return () => this.off(event, listener);
+    return () => {
+      const listeners = this.eventListeners.get(event);
+      if (listeners) {
+        listeners.delete(typedListener);
+      }
+    };
   }
 
   /**
@@ -588,23 +648,28 @@ export class ConnectionManager {
    * @param event - 事件名稱
    * @param listener - 事件監聽器
    */
-  off(
-    event: ConnectionManagerEventType,
-    listener: ConnectionManagerEventListener,
+  off<E extends ConnectionManagerEventType>(
+    event: E,
+    listener: (data: ConnectionManagerEventMap[E]) => void,
   ): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.delete(listener);
+      listeners.delete(listener as ConnectionManagerEventListener);
     }
   }
 
   /**
    * 觸發事件
    *
+   * 💡 使用泛型確保事件數據類型正確
+   *
    * @param event - 事件名稱
-   * @param data - 事件數據
+   * @param data - 事件數據（類型根據事件自動推導）
    */
-  private emit(event: ConnectionManagerEventType, data?: unknown): void {
+  private emit<E extends ConnectionManagerEventType>(
+    event: E,
+    data?: ConnectionManagerEventMap[E],
+  ): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
       listeners.forEach((listener) => {
